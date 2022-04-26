@@ -94,7 +94,7 @@ line.theme <- theme(text = element_text(color = 'black', size = 6),
                     legend.key.size = unit(0.25, 'cm')) 
 
 # Determine which non-linear equation best fits the data
-# For every cell type, group data by age and calculate the coefficients for the quaternary, cubic, and quadratic equations.
+# For every cell type, group data by age and calculate the coefficients for the quaternary, cubic, and quadratic equations
 
 df_list <- list()
 grp_list <- list()
@@ -123,8 +123,8 @@ for (i in 1:28){
                                start = list(a = 0, b = 0, c = 0))
 }
 
-# The type of equation used for each cell type was selected based on the confidence interval and significance (p<0.05) of the leading coefficient.
-# No modeling equation went below the second degree.
+# The type of equation used for each cell type was selected based on the confidence interval and significance (p<0.05) of the leading coefficient
+# No modeling equation went below the second degree
 
 # View the coefficients 
 summary(quart_results[[1]]) # Change number to designate which cell type you want to see
@@ -136,8 +136,8 @@ plot(intervals(quart_results[[1]])) # Change number to designate which cell type
 plot(intervals(cubic_results[[1]])) # Change number to designate which cell type you want to see
 plot(intervals(quad_results[[1]]))  # Change number to designate which cell type you want to see
 
-# If the leading coefficient was significantly different from zero and the confidence interval did not include zero, it was concluded that the leading coefficient was needed.  
-# Otherwise the leading coefficient was not needed and the degree of the equation went down one.
+# If the leading coefficient was significantly different than zero and the confidence interval did not include zero, it was concluded that the leading coefficient was needed  
+# Otherwise the leading coefficient was not needed and the degree of the equation went down one
 # The non-linear equation used for each cell type is detailed below
 
 # Determine if the quadratic formula is different by age group
