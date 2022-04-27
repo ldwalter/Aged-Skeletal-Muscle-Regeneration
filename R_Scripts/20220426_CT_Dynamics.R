@@ -15,7 +15,7 @@ library(Seurat)
 library(stringr)
 
 # Source file ####
-setwd('/FILE/PATH/TO/SEURAT_OBJECT')
+setwd("/FILE/PATH/TO/SEURAT_OBJECT")
 
 seur.obj <- readRDS(file = "SEURAT_OBJECT.rds", refhook = NULL)
 
@@ -39,7 +39,7 @@ cell_count <- cell_count[c(1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28
 colnames(cell_count) <- c("Sample.ID", as.character(unique(df$Var2)))
 
 # Remove the erythrocytes from the data frame
-cell_count$Erythrocytes <-NULL
+cell_count$Erythrocytes <- NULL
 
 # Count the number of cells in each sample
 cell_count$Total <- 0
@@ -84,15 +84,15 @@ write.csv(x = CT_names, file = "CT_names.csv", row.names = FALSE)
 # Statistical analysis using Non-linear modeling ####
 
 # Plot theme
-line.theme <- theme(text = element_text(color = 'black', size = 6),
-                    plot.title = element_text(color = 'black', size = 6, hjust = 0),
-                    plot.subtitle = element_text(color = 'black', size = 6, hjust = 0),
-                    axis.title = element_text(color = 'black', size = 6),
-                    axis.text.x = element_text(color = 'black'), 
-                    axis.text.y = element_text(color = 'black'),
-                    axis.line = element_line(color = 'black', size = 0.25), 
-                    axis.ticks = element_line(color = 'black', size = 0.25),
-                    legend.key.size = unit(0.25, 'cm')) 
+line.theme <- theme(text = element_text(color = "black", size = 6),
+                    plot.title = element_text(color = "black", size = 6, hjust = 0),
+                    plot.subtitle = element_text(color = "black", size = 6, hjust = 0),
+                    axis.title = element_text(color = "black", size = 6),
+                    axis.text.x = element_text(color = "black"), 
+                    axis.text.y = element_text(color = "black"),
+                    axis.line = element_line(color = "black", size = 0.25), 
+                    axis.ticks = element_line(color = "black", size = 0.25),
+                    legend.key.size = unit(0.25, "cm")) 
 
 # Determine which non-linear equation best fits the data
 # For every cell type, group data by age and calculate the coefficients for the quaternary, cubic, and quadratic equations
@@ -177,7 +177,7 @@ for (i in 1:length(nls.null)){
 }
 
 # Convert the quad_dyn data frame into a list of data frames (each data frame is one cell type)
-CTdyn_list <-list()
+CTdyn_list <- list()
 
 for (i in 4:ncol(quad_dyn)){
   CTdyn_list[[i-3]] <- data.frame(quad_dyn[1],
@@ -202,14 +202,14 @@ for (i in 1:length(CTdyn_list)){
     theme_classic() +
     geom_point(size = 0.5, alpha = 0.5) +
     geom_smooth(aes(fill = Age), alpha = 0.2, linetype = 0) +
-    scale_color_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
-    scale_fill_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
+    scale_color_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
+    scale_fill_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
     scale_x_continuous(breaks = seq(0,7,1)) +
     line.theme +
     labs(title = quad_names[i,1],
          subtitle = "Null Hypothesis",
-         x = 'Days post-injury',
-         y = 'Fraction of total cells') 
+         x = "Days post-injury",
+         y = "Fraction of total cells") 
 }
 
 # Combine multiple plots into one ggplot and add the null hypothesis equation
@@ -277,14 +277,14 @@ for (i in 1:length(CTdyn_list)){
     theme_classic() +
     geom_point(size = 0.5, alpha = 0.5) +
     geom_smooth(aes(fill = Age), alpha = 0.2, linetype = 0) +
-    scale_color_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
-    scale_fill_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
+    scale_color_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
+    scale_fill_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
     scale_x_continuous(breaks = seq(0,7,1)) +
     line.theme +
     labs(title = quad_names[i,1],
          subtitle = "Alternative Hypothesis",
-         x = 'Days post-injury',
-         y = 'Fraction of total cells') 
+         x = "Days post-injury",
+         y = "Fraction of total cells") 
 }
 
 # Combine multiple plots into one ggplot and add the alternative hypothesis equations
@@ -292,9 +292,9 @@ null_alt_plots <- list()
 
 for (i in 1:16){
   null_alt_plots[[i]] <- ggarrange(null_plots[[i]] + stat_function(fun=function(x) nls.null.df[i,2]*x^2 + nls.null.df[i,3]*x + nls.null.df[i,4], color="black"),
-                                   alt_plots[[i]] + stat_function(fun=function(x) nls.alt.df[i,2]*x^2 + nls.alt.df[i,3]*x + nls.alt.df[i,4], color='#4c026e') +
-                                     stat_function(fun=function(x) nls.alt.df[i,5]*x^2 + nls.alt.df[i,6]*x + nls.alt.df[i,7], color='#4e94c7') +
-                                     stat_function(fun=function(x) nls.alt.df[i,8]*x^2 + nls.alt.df[i,9]*x + nls.alt.df[i,10], color='#f08205'),
+                                   alt_plots[[i]] + stat_function(fun=function(x) nls.alt.df[i,2]*x^2 + nls.alt.df[i,3]*x + nls.alt.df[i,4], color="#4c026e") +
+                                     stat_function(fun=function(x) nls.alt.df[i,5]*x^2 + nls.alt.df[i,6]*x + nls.alt.df[i,7], color="#4e94c7") +
+                                     stat_function(fun=function(x) nls.alt.df[i,8]*x^2 + nls.alt.df[i,9]*x + nls.alt.df[i,10], color="#f08205"),
                                    ncol = 2,
                                    nrow = 1,
                                    common.legend = TRUE,
@@ -365,7 +365,7 @@ for (i in 1:length(nls.null)){
 }
 
 # Convert the cub_dyn data frame into a list of data frames (each data frame is one cell type)
-CTdyn_list <-list()
+CTdyn_list <- list()
 
 for (i in 4:ncol(cub_dyn)){
   CTdyn_list[[i-3]] <- data.frame(cub_dyn[1],
@@ -390,14 +390,14 @@ for (i in 1:length(CTdyn_list)){
     theme_classic() +
     geom_point(size = 0.5, alpha = 0.5) +
     geom_smooth(aes(fill = Age), alpha = 0.2, linetype = 0) +
-    scale_color_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
-    scale_fill_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
+    scale_color_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
+    scale_fill_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
     scale_x_continuous(breaks = seq(0,7,1)) +
     line.theme +
     labs(title = cub_names[i,1],
          subtitle = "Null Hypothesis",
-         x = 'Days post-injury',
-         y = 'Fraction of total cells') 
+         x = "Days post-injury",
+         y = "Fraction of total cells") 
 }
 
 # Combine multiple plots into one ggplot and add the null hypothesis equation
@@ -458,14 +458,14 @@ for (i in 1:length(CTdyn_list)){
     theme_classic() +
     geom_point(size = 0.5, alpha = 0.5) +
     geom_smooth(aes(fill = Age), alpha = 0.2, linetype = 0) +
-    scale_color_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
-    scale_fill_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
+    scale_color_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
+    scale_fill_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
     scale_x_continuous(breaks = seq(0,7,1)) +
     line.theme +
     labs(title = cub_names[i,1],
          subtitle = "Alternative Hypothesis",
-         x = 'Days post-injury',
-         y = 'Fraction of total cells') 
+         x = "Days post-injury",
+         y = "Fraction of total cells") 
 }
 
 # Combine multiple plots into one ggplot and add the alternative hypothesis equations
@@ -473,9 +473,9 @@ null_alt_plots <- list()
 
 for (i in 1:8){
   null_alt_plots[[i]] <- ggarrange(null_plots[[i]] + stat_function(fun=function(x) nls.null.df[i,2]*x^3 + nls.null.df[i,3]*x^2 + nls.null.df[i,4]*x + nls.null.df[i,5],  color="black"),
-                                   alt_plots[[i]] + stat_function(fun=function(x) nls.alt.df[i,2]*x^3 + nls.alt.df[i,3]*x^2 + nls.alt.df[i,4]*x + nls.alt.df[i,5], color='#4c026e') +
-                                     stat_function(fun=function(x) nls.alt.df[i,6]*x^3 + nls.alt.df[i,7]*x^2 + nls.alt.df[i,8]*x + nls.alt.df[i,9], color='#4e94c7') +
-                                     stat_function(fun=function(x) nls.alt.df[i,10]*x^3 + nls.alt.df[i,11]*x^2 + nls.alt.df[i,12]*x + nls.alt.df[i,13], color='#f08205'),
+                                   alt_plots[[i]] + stat_function(fun=function(x) nls.alt.df[i,2]*x^3 + nls.alt.df[i,3]*x^2 + nls.alt.df[i,4]*x + nls.alt.df[i,5], color="#4c026e") +
+                                     stat_function(fun=function(x) nls.alt.df[i,6]*x^3 + nls.alt.df[i,7]*x^2 + nls.alt.df[i,8]*x + nls.alt.df[i,9], color="#4e94c7") +
+                                     stat_function(fun=function(x) nls.alt.df[i,10]*x^3 + nls.alt.df[i,11]*x^2 + nls.alt.df[i,12]*x + nls.alt.df[i,13], color="#f08205"),
                                    ncol = 2,
                                    nrow = 1,
                                    common.legend = TRUE,
@@ -544,7 +544,7 @@ for (i in 1:length(nls.null)){
 }
 
 # Convert the quat_dyn data frame into a list of data frames  (each data frame is one cell type)
-CTdyn_list <-list()
+CTdyn_list <- list()
 
 for (i in 4:ncol(quat_dyn)){
   CTdyn_list[[i-3]] <- data.frame(quat_dyn[1],
@@ -569,14 +569,14 @@ for (i in 1:length(CTdyn_list)){
     theme_classic() +
     geom_point(size = 0.5, alpha = 0.5) +
     geom_smooth(aes(fill = Age), alpha = 0.2, linetype = 0) +
-    scale_color_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
-    scale_fill_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
+    scale_color_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
+    scale_fill_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
     scale_x_continuous(breaks = seq(0,7,1)) +
     line.theme +
     labs(title = quat_names[i,1],
          subtitle = "Null Hypothesis",
-         x = 'Days post-injury',
-         y = 'Fraction of total cells') 
+         x = "Days post-injury",
+         y = "Fraction of total cells") 
 }
 
 # Combine multiple plots into one ggplot and add the null hypothesis equation
@@ -638,14 +638,14 @@ for (i in 1:length(CTdyn_list)){
     theme_classic() +
     geom_point(size = 0.5, alpha = 0.5) +
     geom_smooth(aes(fill = Age), alpha = 0.2, linetype = 0) +
-    scale_color_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
-    scale_fill_manual("Age", limits = c('Yng', 'Old', 'Ger'), values = c('#f08205', '#4e94c7', '#4c026e')) +
+    scale_color_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
+    scale_fill_manual("Age", limits = c("Yng", "Old", "Ger"), values = c("#f08205", "#4e94c7", "#4c026e")) +
     scale_x_continuous(breaks = seq(0,7,1)) +
     line.theme +
     labs(title = quat_names[i,1],
          subtitle = "Alternative Hypothesis",
-         x = 'Days post-injury',
-         y = 'Fraction of total cells') 
+         x = "Days post-injury",
+         y = "Fraction of total cells") 
 }
 
 # Combine multiple plots into one ggplot and add the alternative hypothesis equations
@@ -706,7 +706,7 @@ data_summary <- function(data, varname, groupnames){
     c(mean = mean(x[[col]], na.rm=TRUE),
       sd = sd(x[[col]], na.rm=TRUE))
   }
-  data_sum<-ddply(data, groupnames, .fun=summary_func,
+  data_sum <- ddply(data, groupnames, .fun=summary_func,
                   varname)
   data_sum <- rename(data_sum, c("mean" = varname))
   return(data_sum)
@@ -772,18 +772,18 @@ for (i in 1:length(table_list)){
                    group = Age_Rep,
                    color = Age), 
                size = 0.5, alpha = 0.5) +
-    scale_color_manual("Age", labels = c('Yng' = 'Young', 'Old' = 'Old', 'Ger' = 'Geriatric'),
-                       limits = c('Yng', 'Old', 'Ger'), 
-                       values = c('#f08205', '#4e94c7', '#4c026e')) +   
-    scale_fill_manual("Age", labels = c('Yng' = 'Young', 'Old' = 'Old', 'Ger' = 'Geriatric'),
-                      limits = c('Yng', 'Old', 'Ger'), 
-                      values = c('#f08205', '#4e94c7', '#4c026e')) +    
+    scale_color_manual("Age", labels = c("Yng" = "Young", "Old" = "Old", "Ger" = "Geriatric"),
+                       limits = c("Yng", "Old", "Ger"), 
+                       values = c("#f08205", "#4e94c7", "#4c026e")) +   
+    scale_fill_manual("Age", labels = c("Yng" = "Young", "Old" = "Old", "Ger" = "Geriatric"),
+                      limits = c("Yng", "Old", "Ger"), 
+                      values = c("#f08205", "#4e94c7", "#4c026e")) +    
     scale_x_continuous(breaks = seq(0,7,1)) +
     line.theme +
     labs(title = CT_names[i], 
          subtitle = paste0("FDR adj. p-value = ", scientific(stats_sum[i,3], digits = 3)),
-         x = 'Days post-injury', 
-         y = 'Fraction of total cells')
+         x = "Days post-injury", 
+         y = "Fraction of total cells")
 }
 
 # Plot the cell types that have a statistically significant difference in their cell type dynamics
@@ -810,7 +810,7 @@ ggplot(data = stats_sum,
        aes(x = Log10,
            y = Cell_types)) +
   theme_classic() +
-  geom_bar(stat = 'identity') +
+  geom_bar(stat = "identity") +
   labs(title = NULL, x = "-log10(FDR adj. p-value)", y = NULL) +
   scale_y_discrete(limits = c("Tenocytes", "T cells (Cycling; Cd3e+)", "T cells (Cd4+)", "Schwann and Neural/Glial cells",
                               "Neutrophils", "Myonuclei", "MuSCs and progenitors", "Monocytes/Macrophages (Cxcl10+)",
@@ -820,9 +820,9 @@ ggplot(data = stats_sum,
                               "M1 Macrophages (Ccr2+)", "Pericytes and Smooth muscle cells", "B cells", "T cells (Non-cycling; Cd3e+)",  
                               "M2 Macrophages (Cx3cr1+)", "Monocytes (Cycling; Cdk1+)", "Monocytes/Macrophages (Patrolling; Ctsa+)",
                               "Dendritic cells (Fscn1+)", "NK cells", "M1/M2 Macrophages (Mrc1+)")) +
-  theme(text = element_text(color = 'black', size = 6), 
-        axis.title = element_text(color = 'black', size = 6),
-        axis.text.x = element_text(color = 'black', hjust = 1), 
-        axis.text.y = element_text(color = 'black', hjust = 1),
-        axis.line = element_line(color = 'black', size = 0.25), 
-        axis.ticks = element_line(color = 'black', size = 0.25)) 
+  theme(text = element_text(color = "black", size = 6), 
+        axis.title = element_text(color = "black", size = 6),
+        axis.text.x = element_text(color = "black", hjust = 1), 
+        axis.text.y = element_text(color = "black", hjust = 1),
+        axis.line = element_line(color = "black", size = 0.25), 
+        axis.ticks = element_line(color = "black", size = 0.25)) 
