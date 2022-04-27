@@ -11,6 +11,7 @@ library(nlme)
 library(plyr)
 library(rlist)
 library(scales)
+library(Seurat)
 library(stringr)
 
 # Source file ####
@@ -48,36 +49,36 @@ for (i in 1:nrow(cell_count)){
 }
 
 # Divide each value in a given row by the total cell count for that row
-perc_cells <- data.frame(matrix(NA, nrow = 65, ncol = 28))
+CT_dynamics <- data.frame(matrix(NA, nrow = 65, ncol = 28))
 
 for (i in 1:65){
   for (j in 2:29){
-    perc_cells[i,j-1] <- cell_count[i,j]/cell_count[i,30]
+    CT_dynamics[i,j-1] <- cell_count[i,j]/cell_count[i,30]
   }
 }
 
 # Make the column labels the cell type annotation
-colnames(perc_cells) <- colnames(cell_count)[2:29]
+colnames(CT_dynamics) <- colnames(cell_count)[2:29]
 
 # Add sample ID, age, and time point columns
-perc_cells$Sample.ID <- cell_count$Sample.ID
-perc_cells$Age <- c("Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", 
-                         "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", 
-                         "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", 
-                         "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng")
-perc_cells$Time.Point <- c(0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3.5, 3.5, 3.5, 3.5, 5, 5, 5, 5, 7, 7, 7, 7, 
-                           0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3.5, 3.5, 3.5, 3.5, 5, 5, 5, 7, 7, 7, 
-                           0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3.5, 3.5, 3.5, 3.5, 5,5, 5, 7, 7, 7)
-perc_cells <- perc_cells[,c(29:31,1:28)]
+CT_dynamics$Sample.ID <- cell_count$Sample.ID
+CT_dynamics$Age <- c("Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", 
+                     "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Ger", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", 
+                     "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Old", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", 
+                     "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng", "Yng")
+CT_dynamics$Time.Point <- c(0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3.5, 3.5, 3.5, 3.5, 5, 5, 5, 5, 7, 7, 7, 7, 
+                            0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3.5, 3.5, 3.5, 3.5, 5, 5, 5, 7, 7, 7, 
+                            0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3.5, 3.5, 3.5, 3.5, 5,5, 5, 7, 7, 7)
+CT_dynamics <- CT_dynamics[,c(29:31,1:28)]
 
 # Remove punctuation and spaces from column names
-colnames(perc_cells) <- str_replace_all(colnames(perc_cells), "[[:punct:]]", ".")
-colnames(perc_cells) <- str_replace_all(colnames(perc_cells), " ", ".")
-colnames(perc_cells) <- str_replace_all(colnames(perc_cells), "[-|=|\\+]", ".")
+colnames(CT_dynamics) <- str_replace_all(colnames(CT_dynamics), "[[:punct:]]", ".")
+colnames(CT_dynamics) <- str_replace_all(colnames(CT_dynamics), " ", ".")
+colnames(CT_dynamics) <- str_replace_all(colnames(CT_dynamics), "[-|=|\\+]", ".")
 
 CT_names <- colnames(cell_count)[2:29]
 
-write.csv(x = perc_cells, file = "CT_dynamics.csv", row.names = FALSE)
+write.csv(x = CT_dynamics, file = "CT_dynamics.csv", row.names = FALSE)
 write.csv(x = CT_names, file = "CT_names.csv", row.names = FALSE)
 
 # Statistical analysis using Non-linear modeling ####
@@ -126,17 +127,17 @@ for (i in 1:28){
 # The type of equation used for each cell type was selected based on the confidence interval and significance (p<0.05) of the leading coefficient
 # No modeling equation went below the second degree
 
-# View the coefficients 
-summary(quart_results[[1]]) # Change number to designate which cell type you want to see
-summary(cubic_results[[1]]) # Change number to designate which cell type you want to see
-summary(quad_results[[1]])  # Change number to designate which cell type you want to see
+# View the coefficients (change number in double brackets to designate which cell type you want to see)
+summary(quart_results[[1]])
+summary(cubic_results[[1]])
+summary(quad_results[[1]])
 
-# View the confidence intervals for each coefficient  
-plot(intervals(quart_results[[1]])) # Change number to designate which cell type you want to see
-plot(intervals(cubic_results[[1]])) # Change number to designate which cell type you want to see
-plot(intervals(quad_results[[1]]))  # Change number to designate which cell type you want to see
+# View the confidence intervals for each coefficient (change number in double brackets to designate which cell type you want to see)  
+plot(intervals(quart_results[[1]]))
+plot(intervals(cubic_results[[1]]))
+plot(intervals(quad_results[[1]]))
 
-# If the leading coefficient was significantly different than zero and the confidence interval did not include zero, it was concluded that the leading coefficient was needed  
+# If the leading coefficient was significantly different than zero and the confidence interval did not include zero for two out of the three age groups, it was concluded that the leading coefficient was needed  
 # Otherwise the leading coefficient was not needed and the degree of the equation went down one
 # The non-linear equation used for each cell type is detailed below
 
@@ -631,9 +632,9 @@ alt_plots <- list()
 
 for (i in 1:length(CTdyn_list)){
   alt_plots[[i]] <- ggplot(data = CTdyn_list[[i]],
-                            aes(x = as.numeric(Time.Point),
-                                y = cell_type,
-                                color = Age)) +
+                           aes(x = as.numeric(Time.Point),
+                               y = cell_type,
+                               color = Age)) +
     theme_classic() +
     geom_point(size = 0.5, alpha = 0.5) +
     geom_smooth(aes(fill = Age), alpha = 0.2, linetype = 0) +
