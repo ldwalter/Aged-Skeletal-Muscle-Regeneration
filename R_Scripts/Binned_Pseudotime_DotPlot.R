@@ -1,6 +1,6 @@
 ########################################################
 # Binned pseudotime DotPlot
-# Lauren Walter - September 2022
+# Lauren Walter - 2022
 ########################################################
 
 # Load libraries ####
