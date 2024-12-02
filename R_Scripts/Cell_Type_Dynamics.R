@@ -1,6 +1,6 @@
 ########################################################
 # Cell Type Dynamics: Plotting and Statistical Analysis
-# Lauren Walter - August 2022
+# Lauren Walter - 2022
 ########################################################
 
 # Load libraries ####
